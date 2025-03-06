@@ -28,7 +28,6 @@ from .transformer import (
     TextTransformer,
     text_global_pool,
 )
-
 from .utils import to_2tuple
 
 
