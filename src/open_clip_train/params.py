@@ -516,19 +516,18 @@ def parse_args(args):
         help="A string to specify a specific distributed loss implementation.",
     )
 
-    # -------------------------
     parser.add_argument(
         "--use_soft_labels",
         action="store_true",
         help="Enable soft labels for contrastive loss",
     )
+
     parser.add_argument(
         "--alpha",
         type=float,
         default=0.5,
         help="Weight for combining original CLIP loss and soft label loss",
     )
-    # --------------------------
 
     args = parser.parse_args(args)
 
