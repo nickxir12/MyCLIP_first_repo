@@ -32,7 +32,7 @@ def compute_pairwise_similarities(features):
     return similarities
 
 
-def create_soft_labels(similarities, temperature=0.07):
+def create_soft_labels(similarities, temperature=0.02):
     """Convert similarities into probabilities using softmax."""
     soft_labels = F.softmax(similarities / temperature, dim=1)
     return soft_labels

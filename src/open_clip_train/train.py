@@ -142,7 +142,9 @@ def train_one_epoch(
                     images, dino_model, dino_processor, device
                 )
                 dino_similarities = compute_pairwise_similarities(dino_features)
-                soft_labels = create_soft_labels(dino_similarities)
+                soft_labels = create_soft_labels(
+                    dino_similarities, temprature=args.soft_temprature
+                )
         # --------------------------------------------------
 
         if args.accum_freq == 1:

@@ -41,6 +41,13 @@ def parse_args(args):
     )
 
     parser.add_argument(
+        "--soft_temprature",
+        type=float,
+        default=0.02,
+        help="Temprature for soft labels",
+    )
+
+    parser.add_argument(
         "--train-data",
         type=str,
         default=None,
