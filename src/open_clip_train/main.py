@@ -38,6 +38,8 @@ except ImportError:
     hvd = None
 
 sys.path.append(os.path.abspath(".."))
+repo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+sys.path.append(repo_path)
 
 from open_clip import (
     create_model_and_transforms,
