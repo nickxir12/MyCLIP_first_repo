@@ -152,6 +152,8 @@ def train_one_epoch(
             with autocast():
                 model_out = model(images, texts)
 
+                print("DEBUG: model_out keys ->", model_out.keys())  # Add this line
+
                 # Distillation logic
                 logit_scale = model_out["logit_scale"]
                 if args.distill:
@@ -168,6 +170,14 @@ def train_one_epoch(
                 # Compute soft label loss (if enabled)
                 soft_label_loss = 0.0
                 if args.use_soft_labels:
+
+                    if "image_embeds" not in model_out:
+                        print("ERROR: 'image_embeds' not found in model_out!")
+                        print(
+                            "DEBUG: model_out keys ->", model_out.keys()
+                        )  # Print keys again
+                        raise KeyError("'image_embeds' missing from model output.")
+
                     model_image_embeds = model_out["image_embeds"]
                     normalized_model_image = F.normalize(model_image_embeds, dim=1)
                     model_image_similarities = torch.mm(
