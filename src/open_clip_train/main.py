@@ -23,11 +23,6 @@ import numpy as np
 import torch
 from torch import optim
 
-# -------------------------------------------------------------------------------------
-
-
-# -------------------------------------------------------------------------------------
-
 
 try:
     import wandb
@@ -118,6 +113,12 @@ def main(args):
 
     # fully initialize distributed device environment
     device = init_distributed_device(args)
+
+    # --------------------  My changes       -------------------------------------------
+
+    dino_processor, dino_model = load_dino_model(device=device)
+
+    # -------------------------------------------------------------------------------------
 
     # get the name of the experiments
     if args.name is None:
@@ -584,6 +585,8 @@ def main(args):
             scaler,
             scheduler,
             dist_model,
+            dino_model,
+            dino_processor,
             args,
             tb_writer=writer,
         )

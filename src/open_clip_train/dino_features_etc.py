@@ -2,20 +2,21 @@ from transformers import AutoImageProcessor, AutoModel
 import torch.nn.functional as F
 import torch
 
-
-# Load pre-trained DinoV2 model
-dino_processor = AutoImageProcessor.from_pretrained("facebook/dinov2-small")
-dino_model = AutoModel.from_pretrained("facebook/dinov2-small").to(device)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
 
 
-def load_dino_model(model_name="facebook/dinov2-small", device="cuda"):
+def load_dino_model(model_name="facebook/dinov2-small", device=device):
     """Load the pre-trained DinoV2 model."""
     processor = AutoImageProcessor.from_pretrained(model_name)
     model = AutoModel.from_pretrained(model_name).to(device)
     return processor, model
 
 
-def extract_dino_features(images, dino_model, dino_processor):
+def extract_dino_features(images, dino_model, dino_processor, device=device):
+    # Normalize images to [0, 1] range
+    images = (images - images.min()) / (images.max() - images.min())
+
     inputs = dino_processor(images=images, return_tensors="pt").to(device)
     with torch.no_grad():
         features = dino_model(**inputs).last_hidden_state[:, 0, :]  # Use CLS token
