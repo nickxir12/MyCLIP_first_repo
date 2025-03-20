@@ -15,8 +15,6 @@ from dino_features_etc import (
     compute_pairwise_similarities,
     create_soft_labels,
     compute_soft_label_loss,
-    clip_loss,
-    setup_optimizer,
 )
 
 import numpy as np
