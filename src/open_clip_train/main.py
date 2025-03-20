@@ -37,6 +37,8 @@ try:
 except ImportError:
     hvd = None
 
+sys.path.append(os.path.abspath(".."))
+
 from open_clip import (
     create_model_and_transforms,
     trace_model,
@@ -676,4 +678,5 @@ def copy_codebase(args):
 
 
 if __name__ == "__main__":
+    print(sys.argv)
     main(sys.argv[1:])
