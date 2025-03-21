@@ -177,12 +177,12 @@ def train_one_epoch(
                 else:
                     # Compute DINO regularized loss
                     image_features = model_out["image_features"]
-                    # text_features = model_out["text_features"]
+                    text_features = model_out["text_features"]
 
                     # Compute loss with DINO regularization
                     losses = loss(
                         image_features=image_features,
-                        # text_features=text_features,
+                        text_features=text_features,
                         logit_scale=model_out["logit_scale"],
                         dino_similarities=dino_similarities,  # Pass DINO similarities
                         output_dict=True,
