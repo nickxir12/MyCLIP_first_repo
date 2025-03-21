@@ -187,7 +187,8 @@ def train_one_epoch(
                         dino_similarities=dino_similarities,  # Pass DINO similarities
                         output_dict=True,
                     )
-                    original_clip_loss = sum(losses.values())
+                    dino_reg_loss = losses["dino_regularization"]
+                    original_clip_loss = losses["total_loss"]
 
                 # Compute soft label loss (if enabled)
                 soft_label_loss = 0.0
@@ -258,7 +259,9 @@ def train_one_epoch(
                     "loss": total_loss,
                 }
                 if args.use_soft_labels:
-                    losses["soft_label_loss"] = soft_label_loss
+                    losses["soft_label_loss"] = (soft_label_loss,)
+                if hasattr(args, "lambda_dino") and args.lambda_dino > 0:
+                    losses["dino_reguarizing_loss"] = (dino_reg_loss,)
 
             backward(total_loss, scaler)
 
