@@ -1,9 +1,9 @@
 name: Continuous integration
 
 on:
-  push:
-    branches:
-    - main 
+  # push:
+  #   branches:
+  #   - main 
     paths-ignore:
     - '**.md'
     - 'CITATION.cff'
