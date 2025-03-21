@@ -145,6 +145,13 @@ def train_one_epoch(
                 soft_labels = create_soft_labels(
                     dino_similarities, temperature=args.soft_temprature
                 )
+        # For only regualrizng no need for similarity array
+        elif hasattr(args, "lambda_dino") and not (args.use_soft_labels):
+            dino_features = extract_dino_features(
+                images, dino_model, dino_processor, device
+            )
+            dino_similarities = compute_pairwise_similarities(dino_features)
+
         # --------------------------------------------------
 
         if args.accum_freq == 1:
@@ -164,8 +171,23 @@ def train_one_epoch(
                     )
 
                 # Compute original CLIP loss
-                losses = loss(**model_out, output_dict=True)
-                original_clip_loss = sum(losses.values())
+                if not (hasattr(args, "lambda_dino") and args.lambda_dino > 0):
+                    losses = loss(**model_out, output_dict=True)
+                    original_clip_loss = sum(losses.values())
+                else:
+                    # Compute DINO regularized loss
+                    image_features = model_out["image_features"]
+                    text_features = model_out["text_features"]
+
+                    # Compute loss with DINO regularization
+                    losses = loss(
+                        image_features=image_features,
+                        text_features=text_features,
+                        logit_scale=model_out["logit_scale"],
+                        dino_similarities=dino_similarities,  # Pass DINO similarities
+                        output_dict=True,
+                    )
+                    original_clip_loss = sum(losses.values())
 
                 # Compute soft label loss (if enabled)
                 soft_label_loss = 0.0

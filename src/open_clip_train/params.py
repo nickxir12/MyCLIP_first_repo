@@ -38,7 +38,12 @@ def parse_args(args):
         action="store_true",
         help="Enable soft labels of Image also to text",
     )
-
+    parser.add_argument(
+        "--lambda_dino",
+        type=float,
+        default=0.1,
+        help="Regularizor for extra sitance loss",
+    )
     parser.add_argument(
         "--alpha",
         type=float,
