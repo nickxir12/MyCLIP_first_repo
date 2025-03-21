@@ -263,7 +263,7 @@ def train_one_epoch(
                 if args.use_soft_labels:
                     losses["soft_label_loss"] = (soft_label_loss,)
                 if hasattr(args, "lambda_dino") and args.lambda_dino > 0:
-                    losses["dino_reguarizing_loss"] = (dino_reg_loss,)
+                    losses["dino_reguarizing_loss"] = dino_reg_loss
 
             backward(total_loss, scaler)
 
