@@ -249,8 +249,8 @@ class ClipLossWithDINORegularization(nn.Module):
             image_features = F.normalize(image_features, p=2, dim=-1)
             # Compute MSE between model's similarities and DINO similarities
             dino_regularization = (
-                1 - F.cosine_similarity(image_similarities, dino_similarities).mean()
-            )
+                1 - F.cosine_similarity(image_similarities, dino_similarities, dim=-1)
+            ).mean()
 
         # Combine losses
         total_loss = contrastive_loss + self.lambda_dino * dino_regularization
