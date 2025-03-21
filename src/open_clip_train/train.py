@@ -177,12 +177,12 @@ def train_one_epoch(
                 else:
                     # Compute DINO regularized loss
                     image_features = model_out["image_features"]
-                    text_features = model_out["text_features"]
+                    # text_features = model_out["text_features"]
 
                     # Compute loss with DINO regularization
                     losses = loss(
                         image_features=image_features,
-                        text_features=text_features,
+                        # text_features=text_features,
                         logit_scale=model_out["logit_scale"],
                         dino_similarities=dino_similarities,  # Pass DINO similarities
                         output_dict=True,
@@ -445,8 +445,17 @@ def train_one_epoch(
             # NOTE loss is coarsely sampled, just master node and per log update
             for key, val in losses.items():
                 if key not in losses_m:
-                    losses_m[key] = AverageMeter()
-                losses_m[key].update(val.item(), batch_size)
+                    losses_m[key] = (
+                        AverageMeter()
+                    )  # Initialize AverageMeter if not exists
+                if isinstance(val, torch.Tensor):  # Ensure val is a tensor
+                    losses_m[key].update(
+                        val.item(), batch_size
+                    )  # Update with scalar value
+                else:
+                    raise ValueError(
+                        f"Expected a tensor for key '{key}', but got {type(val)}"
+                    )
 
             logit_scale_scalar = logit_scale.item()
             loss_log = " ".join(

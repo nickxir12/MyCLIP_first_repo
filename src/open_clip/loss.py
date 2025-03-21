@@ -246,8 +246,11 @@ class ClipLossWithDINORegularization(nn.Module):
         if dino_similarities is not None:
             # Compute model's image similarities
             image_similarities = torch.matmul(image_features, image_features.T)
+            image_features = F.normalize(image_features, p=2, dim=-1)
             # Compute MSE between model's similarities and DINO similarities
-            dino_regularization = F.mse_loss(image_similarities, dino_similarities)
+            dino_regularization = (
+                1 - F.cosine_similarity(image_similarities, dino_similarities).mean()
+            )
 
         # Combine losses
         total_loss = contrastive_loss + self.lambda_dino * dino_regularization
