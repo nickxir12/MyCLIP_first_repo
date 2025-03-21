@@ -184,9 +184,42 @@ def train_one_epoch(
                     model_image_similarities = torch.mm(
                         normalized_model_image, normalized_model_image.T
                     )
-                    soft_label_loss = compute_soft_label_loss(
+                    image_soft_label_loss = compute_soft_label_loss(
                         model_image_similarities, soft_labels
                     )
+
+                    # Enforce image similarities to text embeddings (if enabled)
+                    if args.enforce_to_text:
+                        # Ensure text features are available
+                        if "text_features" in model_out:
+                            model_text_embeds = model_out[
+                                "text_features"
+                            ]  # Use the correct key
+                        else:
+                            print("ERROR: 'text_features' not found in model_out!")
+                            print(
+                                "DEBUG: model_out keys ->", model_out.keys()
+                            )  # Debugging
+                            raise KeyError("'text_features' missing from model output.")
+
+                        # Normalize text embeddings and compute similarities
+                        normalized_model_text = F.normalize(model_text_embeds, dim=1)
+                        model_text_similarities = torch.mm(
+                            normalized_model_text, normalized_model_text.T
+                        )
+
+                        # Compute soft label loss for text embeddings
+                        text_soft_label_loss = compute_soft_label_loss(
+                            model_text_similarities, soft_labels
+                        )
+
+                        # Combine image and text soft label losses
+                        soft_label_loss = (
+                            image_soft_label_loss + text_soft_label_loss
+                        ) / 2
+                    else:
+                        # Only use image soft label loss
+                        soft_label_loss = image_soft_label_loss
 
                 # Combine the losses (if soft labels are enabled)
                 if args.use_soft_labels:
@@ -276,9 +309,47 @@ def train_one_epoch(
                         model_image_similarities = torch.mm(
                             normalized_model_image, normalized_model_image.T
                         )
-                        soft_label_loss = compute_soft_label_loss(
+
+                        image_soft_label_loss = compute_soft_label_loss(
                             model_image_similarities, accum_features["soft_labels"][j]
                         )
+
+                        # Enforce image similarities to text embeddings (if enabled)
+                        if args.enforce_to_text:
+                            # Ensure text features are available
+                            if "text_features" in model_out:
+                                model_text_embeds = model_out[
+                                    "text_features"
+                                ]  # Use the correct key
+                            else:
+                                print("ERROR: 'text_features' not found in model_out!")
+                                print(
+                                    "DEBUG: model_out keys ->", model_out.keys()
+                                )  # Debugging
+                                raise KeyError(
+                                    "'text_features' missing from model output."
+                                )
+
+                            # Normalize text embeddings and compute similarities
+                            normalized_model_text = F.normalize(
+                                model_text_embeds, dim=1
+                            )
+                            model_text_similarities = torch.mm(
+                                normalized_model_text, normalized_model_text.T
+                            )
+
+                            # Compute soft label loss for text embeddings
+                            text_soft_label_loss = compute_soft_label_loss(
+                                model_text_similarities, soft_labels
+                            )
+
+                            # Combine image and text soft label losses
+                            soft_label_loss = (
+                                image_soft_label_loss + text_soft_label_loss
+                            ) / 2
+                        else:
+                            # Only use image soft label loss
+                            soft_label_loss = image_soft_label_loss
 
                     # Combine the losses (if soft labels are enabled)
                     if args.use_soft_labels:

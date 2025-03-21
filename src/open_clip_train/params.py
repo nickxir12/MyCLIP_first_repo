@@ -34,6 +34,12 @@ def parse_args(args):
         help="Enable soft labels for contrastive loss",
     )
     parser.add_argument(
+        "--enforce_to_text",
+        action="store_true",
+        help="Enable soft labels of Image also to text",
+    )
+
+    parser.add_argument(
         "--alpha",
         type=float,
         default=0.5,
