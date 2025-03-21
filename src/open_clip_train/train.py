@@ -187,6 +187,8 @@ def train_one_epoch(
                         dino_similarities=dino_similarities,  # Pass DINO similarities
                         output_dict=True,
                     )
+                    print(f"losses: {losses}")
+
                     dino_reg_loss = losses["dino_regularization"]
                     original_clip_loss = losses["total_loss"]
 
