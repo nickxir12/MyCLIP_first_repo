@@ -85,6 +85,8 @@ def evaluate_model(
         DataFrame containing image paths, retrieved captions, and similarity scores.
     """
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     # Store extracted features
     image_features = []
     text_features = []
